@@ -1,6 +1,7 @@
 #include "Matrix.h"
 #include <iostream>
 #include <cassert>
+#include <cstring>
 
 /******************************************************************************
  * Constructs a Matrix object from an array of ints
@@ -15,10 +16,7 @@ Matrix::Matrix(int n, int m, int* a)
         assert(n*m <= ARRAYSIZE);
 	NUMBER_OF_ROWS = n;
 	NUMBER_OF_COLUMNS = m;
-	for (int i=0; i<NUMBER_OF_ROWS*NUMBER_OF_COLUMNS; ++i)
-	{
-		array[i] = *(a+i);
-        }
+	memcpy(array, a, NUMBER_OF_ROWS*NUMBER_OF_COLUMNS*sizeof(int));
 }
 
 /******************************************************************************
