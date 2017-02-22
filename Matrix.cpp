@@ -1,5 +1,4 @@
 #include "Matrix.h"
-#include <iostream>
 #include <cassert>
 #include <cstring>
 
@@ -38,13 +37,13 @@ bool Matrix::equals(int* a)
 }
 
 /******************************************************************************
- * Gives the memory position of an array element before transposition
+ * Gives the memory position of an array element
  *
  * @param r Row
  * @param c Column
  *
  *****************************************************************************/
-int Matrix::positionBeforeTransposition(int r, int c)
+int Matrix::position(int r, int c)
 {
 	return NUMBER_OF_COLUMNS*r+c;
 }
@@ -57,7 +56,7 @@ int Matrix::positionBeforeTransposition(int r, int c)
  *****************************************************************************/
 int Matrix::rowBeforeTransposition(int p)
 {
-	return p / NUMBER_OF_COLUMNS;
+	return p % NUMBER_OF_ROWS;
 }
 
 /******************************************************************************
@@ -68,19 +67,20 @@ int Matrix::rowBeforeTransposition(int p)
  *****************************************************************************/
 int Matrix::columnBeforeTransposition(int p)
 {
-	return p % NUMBER_OF_COLUMNS;
+	return p / NUMBER_OF_ROWS;
 }
 
 /******************************************************************************
- * Gives the memory position of an array element after transposition
+ * Gives positin of an array element before transposition
  *
- * @param r Row
- * @param c Column
- * @return Position in the memory
+ * @param p Memory position
+ * @return Previous position
  *****************************************************************************/
-int Matrix::positionAfterTransposition(int r, int c)
+int Matrix::positionBeforeTransposition(int p)
 {
-	return NUMBER_OF_ROWS*r+c;
+  int previousC = columnBeforeTransposition(p);
+  int previousR = rowBeforeTransposition(p);
+  return position(previousR, previousC);
 }
 
 /******************************************************************************
@@ -95,33 +95,35 @@ void Matrix::transpose()
     {
       for (int c=0; c < NUMBER_OF_COLUMNS; ++c)
 	{
-	  int pos1 = positionBeforeTransposition(r,c);
-	  int pos2 = positionAfterTransposition(c,r);
-				
+	  int pos1 = position(r,c);
+	  int firstPos = pos1;
+	  			
 	  // Store away first number
-	  int previousValue = array[pos1];
+	  int tmp = array[pos1];
 	  beenThere[pos1] = true;
-	  int memory;
+
+	  // Find the array element that will be moved into pos1
+	  // during transposition
+
+	  int pos2 = positionBeforeTransposition(pos1);
 
 	  while (!beenThere[pos2])
 	    {
 	      // Shift values
-	      memory = array[pos2];
-	      array[pos2] = previousValue;
-	      beenThere[pos2] = true;
 
-	      int newC = columnBeforeTransposition(pos2);
-	      int newR = rowBeforeTransposition(pos2);
-	      previousValue = memory;
-		  
-	      pos2 = positionAfterTransposition(newC, newR);
+	      array[pos1] = array[pos2];
+	      beenThere[pos2] = true;
+	      pos1 = pos2;
+
+	      pos2 = positionBeforeTransposition(pos1);
 
 	    };
 
-	  // Back at the beginning? (We possibly never left.)
-	  if (pos2==pos1)
+	  // Back at the beginning? (We possibly never left ...)
+	  if (pos2 == firstPos)
 	  {
-	      array[pos2] = previousValue;
+	      // This is where we need the value we stored
+	      array[pos1] = tmp;
 	  };
      };
   };

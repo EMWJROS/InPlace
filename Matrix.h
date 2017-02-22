@@ -9,10 +9,10 @@ class Matrix
 		int NUMBER_OF_ROWS;
 		int NUMBER_OF_COLUMNS;
 		int array[ARRAYSIZE];
-		int positionBeforeTransposition(int r, int c);
+		int position(int r, int c);
 		int rowBeforeTransposition(int p);
 		int columnBeforeTransposition(int p);
-		int positionAfterTransposition(int r, int c);
+		int positionBeforeTransposition(int p);
 		
 	public:
 		Matrix(int n, int m, int* a);
